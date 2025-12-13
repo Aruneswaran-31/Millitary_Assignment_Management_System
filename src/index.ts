@@ -1,14 +1,23 @@
-import app from "./app";
-import { prisma } from "./db";
+import express from "express";
+import cors from "cors";
+import dotenv from "dotenv";
 
-const PORT = process.env.PORT || 4000;
+dotenv.config();
 
-app.listen(PORT, async () => {
-  console.log(`Server listening on ${PORT}`);
-  try {
-    await prisma.$connect();
-    console.log("Connected to DB");
-  } catch (err) {
-    console.error("DB connection error", err);
-  }
+const app = express();
+
+app.use(cors({
+  origin: "https://militryfrontend.netlify.app",
+}));
+app.use(express.json());
+
+// example route
+app.get("/api/health", (_req, res) => {
+  res.json({ ok: true });
+});
+
+// 👇 PASTE HERE (VERY BOTTOM)
+const port = process.env.PORT || 4000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
