@@ -1,30 +1,18 @@
-﻿import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import bcrypt from "bcryptjs";
+﻿import jwt from "jsonwebtoken";
 
-// Hardcoded admin (NO DB)
 const ADMIN_USER = {
   username: "admin",
-  passwordHash: bcrypt.hashSync("adminpass", 10),
+  password: "adminpass",
   role: "ADMIN",
 };
 
-export async function login(req: Request, res: Response) {
-  const { username, password } = req.body as {
-    username?: string;
-    password?: string;
-  };
+export async function login(req: any, res: any) {
+  const { username, password } = req.body;
 
-  if (!username || !password) {
-    return res.status(400).json({ message: "Username and password required" });
-  }
-
-  if (username !== ADMIN_USER.username) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-
-  const valid = await bcrypt.compare(password, ADMIN_USER.passwordHash);
-  if (!valid) {
+  if (
+    username !== ADMIN_USER.username ||
+    password !== ADMIN_USER.password
+  ) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
@@ -34,5 +22,5 @@ export async function login(req: Request, res: Response) {
     { expiresIn: "1d" }
   );
 
-  return res.json({ token });
+  res.json({ token });
 }

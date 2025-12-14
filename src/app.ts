@@ -1,18 +1,28 @@
-import express, { Request, Response } from "express";
+import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+
+// allow preflight
+app.options("*", cors());
+
 app.use(express.json());
 
-// Health check
-app.get("/api/health", (_req: Request, res: Response) => {
+// health check
+app.get("/api/health", (_req, res) => {
   res.json({ ok: true });
 });
 
-// Routes
+// routes
 app.use("/api", authRoutes);
 
 export default app;
