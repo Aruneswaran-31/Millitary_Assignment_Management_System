@@ -1,12 +1,11 @@
 generator client {
   provider = "prisma-client-js"
-  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 model Role {
   id    Int    @id @default(autoincrement())
@@ -14,91 +13,21 @@ model Role {
   users User[]
 }
 
-model User {
-  id       String  @id @default(autoincrement())
-  username String  @unique
-  email    String? @unique
-  password String
-  roleId   Int
-  role     String  @relation(fields: [roleId], references: [id])
-  baseId   Int?
-}
-
 model Base {
-  id       Int    @id @default(autoincrement())
-  name     String
-  location String?
-}
-
-model EquipmentType {
   id    Int    @id @default(autoincrement())
-  code  String @unique
   name  String
-  unit  String
+  users User[]
 }
 
-model Movement {
-  id              BigInt   @id @default(autoincrement())
-  equipmentTypeId Int
-  baseId          Int
-  movementType    String
-  relatedId       BigInt?
-  quantity        Int
-  createdBy       String
-  createdAt       DateTime @default(now())
-  notes           String?
-}
+model User {
+  id        Int    @id @default(autoincrement())
+  username  String @unique
+  email     String @unique
+  password  String
 
-model Purchase {
-  id              BigInt   @id @default(autoincrement())
-  equipmentTypeId Int
-  baseId          Int
-  quantity        Int
-  unitCost        Float?
-  purchasedBy     String
-  purchasedAt     DateTime @default(now())
-  notes           String?
-}
+  roleId    Int
+  role      Role   @relation(fields: [roleId], references: [id])
 
-model Transfer {
-  id              BigInt @id @default(autoincrement())
-  equipmentTypeId Int
-  fromBaseId      Int
-  toBaseId        Int
-  quantity        Int
-  initiatedBy     String
-  initiatedAt     DateTime @default(now())
-  status          String @default("completed")
-  notes           String?
-}
-
-model Assignment {
-  id              BigInt @id @default(autoincrement())
-  equipmentTypeId Int
-  baseId          Int
-  assignedTo      String
-  quantity        Int
-  assignedBy      String
-  assignedAt      DateTime @default(now())
-  notes           String?
-}
-
-model Expenditure {
-  id              BigInt @id @default(autoincrement())
-  equipmentTypeId Int
-  baseId          Int
-  quantity        Int
-  recordedBy      String
-  recordedAt      DateTime @default(now())
-  reason          String?
-}
-
-model AuditLog {
-  id        BigInt  @id @default(autoincrement())
-  userId    String?
-  action    String
-  tableName String?
-  recordId  String?
-  payload   Json?
-  createdAt DateTime @default(now())
+  baseId    Int?
+  base      Base?  @relation(fields: [baseId], references: [id])
 }
