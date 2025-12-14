@@ -2,11 +2,11 @@ generator client {
   provider = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
-
 datasource db {
   provider = "postgresql"
-  url      = env(postgresql://mildb_user:kmK8bxRXk5aqAR3k8y31do4bUyWryyFm@dpg-d4uesvre5dus739qfmt0-a/mildb)
+  url      = env("DATABASE_URL")
 }
+
 
 model Role {
   id    Int    @id @default(autoincrement())
