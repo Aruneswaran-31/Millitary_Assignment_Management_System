@@ -30,8 +30,7 @@ router.post("/seed-admin", async (_req, res) => {
     if (!base) {
       base = await prisma.base.create({
         data: {
-          name: "HQ",
-          location: "Headquarters",
+          name: "HQ"
         },
       });
     }
