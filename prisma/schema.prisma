@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env(postgresql://mildb_user:kmK8bxRXk5aqAR3k8y31do4bUyWryyFm@dpg-d4uesvre5dus739qfmt0-a/mildb)
 }
 
 model Role {
@@ -15,12 +15,12 @@ model Role {
 }
 
 model User {
-  id       String  @id @default(uuid())
+  id       String  @id @default(autoincrement())
   username String  @unique
   email    String? @unique
   password String
   roleId   Int
-  role     Role    @relation(fields: [roleId], references: [id])
+  role     String  @relation(fields: [roleId], references: [id])
   baseId   Int?
 }
 
