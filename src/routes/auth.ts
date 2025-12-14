@@ -5,9 +5,10 @@ import bcrypt from "bcryptjs";
 
 const router = Router();
 
+// LOGIN
 router.post("/login", login);
 
-export default router;
+// SEED ADMIN
 router.post("/seed-admin", async (_req, res) => {
   try {
     // 1️⃣ Ensure ROLE exists
@@ -66,3 +67,4 @@ router.post("/seed-admin", async (_req, res) => {
   }
 });
 
+export default router;
