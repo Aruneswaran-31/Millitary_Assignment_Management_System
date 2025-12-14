@@ -13,21 +13,22 @@ model Role {
   users User[]
 }
 
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  email    String @unique
+  password String
+  roleId   Int
+  baseId   Int
+
+  role Role @relation(fields: [roleId], references: [id])
+  base Base @relation(fields: [baseId], references: [id])
+}
+
 model Base {
   id    Int    @id @default(autoincrement())
-  name  String
+  name  String @unique   
   users User[]
 }
 
-model User {
-  id        Int    @id @default(autoincrement())
-  username  String @unique
-  email     String @unique
-  password  String
 
-  roleId    Int
-  role      Role   @relation(fields: [roleId], references: [id])
-
-  baseId    Int?
-  base      Base?  @relation(fields: [baseId], references: [id])
-}

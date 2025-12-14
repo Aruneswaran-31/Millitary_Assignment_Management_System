@@ -11,8 +11,8 @@ router.post("/login", login);
 // SEED ADMIN
 router.post("/seed-admin", async (_req, res) => {
   try {
-    // 1️⃣ Ensure ROLE exists
-    let role = await prisma.role.findFirst({
+    // ROLE
+    let role = await prisma.role.findUnique({
       where: { name: "ADMIN" },
     });
 
@@ -22,27 +22,28 @@ router.post("/seed-admin", async (_req, res) => {
       });
     }
 
-    // 2️⃣ Ensure BASE exists
-   let base = await prisma.base.findFirst({
-  where: { name: "HQ" },
-});
+    // BASE
+    let base = await prisma.base.findFirst({
+      where: { name: "HQ" },
+    });
 
-if (!base) {
-  base = await prisma.base.create({
-    data: {
-      name: "HQ",
-    },
-  });
-}
 
-    // 3️⃣ Hash password
+    if (!base) {
+      base = await prisma.base.create({
+        data: { name: "HQ" },
+      });
+    }
+
+    // PASSWORD
     const passwordHash = await bcrypt.hash("adminpass", 10);
 
-    // 4️⃣ Create or update ADMIN user
+    // USER
     await prisma.user.upsert({
       where: { username: "admin" },
       update: {
         password: passwordHash,
+        roleId: role.id,
+        baseId: base.id,
       },
       create: {
         username: "admin",
@@ -53,16 +54,10 @@ if (!base) {
       },
     });
 
-    res.json({
-      ok: true,
-      message: "Admin seeded successfully",
-    });
+    res.json({ ok: true, message: "Admin seeded successfully" });
   } catch (err) {
     console.error("SEED ERROR:", err);
-    res.status(500).json({
-      error: "Seed failed",
-      details: String(err),
-    });
+    res.status(500).json({ error: "Seed failed", details: String(err) });
   }
 });
 
