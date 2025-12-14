@@ -23,17 +23,17 @@ router.post("/seed-admin", async (_req, res) => {
     }
 
     // 2️⃣ Ensure BASE exists
-    let base = await prisma.base.findFirst({
-      where: { name: "HQ" },
-    });
+   let base = await prisma.base.findFirst({
+  where: { name: "HQ" },
+});
 
-    if (!base) {
-      base = await prisma.base.create({
-        data: {
-          name: "HQ"
-        },
-      });
-    }
+if (!base) {
+  base = await prisma.base.create({
+    data: {
+      name: "HQ",
+    },
+  });
+}
 
     // 3️⃣ Hash password
     const passwordHash = await bcrypt.hash("adminpass", 10);
