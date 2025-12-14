@@ -1,13 +1,10 @@
-generator client {
-  provider = "prisma-client-js"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 model Role {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  users User[]
+}
+
+model Base {
   id    Int    @id @default(autoincrement())
   name  String @unique
   users User[]
@@ -24,11 +21,3 @@ model User {
   role Role @relation(fields: [roleId], references: [id])
   base Base @relation(fields: [baseId], references: [id])
 }
-
-model Base {
-  id    Int    @id @default(autoincrement())
-  name  String @unique   
-  users User[]
-}
-
-
