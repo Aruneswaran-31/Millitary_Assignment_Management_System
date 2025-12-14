@@ -7,42 +7,41 @@ router.post("/login", login);
 
 export default router;
 
-import bcrypt from "bcryptjs";
-import { prisma } from "../db";
-
 router.post("/seed-admin", async (_req, res) => {
   try {
-    // ensure role exists
-    const role = await prisma.role.upsert({
+    const role = await prisma.role.findFirst({
       where: { name: "ADMIN" },
-      update: {},
-      create: { name: "ADMIN" },
     });
 
-    // ensure base exists
-    const base = await prisma.base.upsert({
+    const base = await prisma.base.findFirst({
       where: { name: "HQ" },
-      update: {},
-      create: { name: "HQ" },
     });
+
+    if (!role || !base) {
+      return res.status(500).json({
+        error: "Role or Base table missing. DB not initialized properly.",
+      });
+    }
 
     const passwordHash = await bcrypt.hash("adminpass", 10);
 
     await prisma.user.upsert({
       where: { username: "admin" },
-      update: {},
+      update: {
+        password: passwordHash,
+      },
       create: {
         username: "admin",
         email: "admin@system.com",
         password: passwordHash,
-        role: { connect: { id: role.id } },
-        base: { connect: { id: base.id } },
+        roleId: role.id,
+        baseId: base.id,
       },
     });
 
-    res.json({ ok: true, message: "Admin seeded" });
+    res.json({ ok: true, message: "Admin seeded successfully" });
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Seed failed" });
+    console.error("SEED ERROR:", err);
+    res.status(500).json({ error: "Seed failed", details: String(err) });
   }
 });
