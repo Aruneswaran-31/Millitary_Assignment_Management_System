@@ -6,7 +6,6 @@ const router = Router();
 router.post("/login", login);
 
 export default router;
-
 router.post("/seed-admin", async (_req, res) => {
   try {
     const role = await prisma.role.findFirst({
