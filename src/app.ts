@@ -12,17 +12,12 @@ app.use(
   })
 );
 
-// allow preflight
-app.options("*", cors());
-
 app.use(express.json());
 
-// health check
-app.get("/api/health", (_req, res) => {
-  res.json({ ok: true });
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ ok: true });
 });
 
-// routes
 app.use("/api", authRoutes);
 
 export default app;
